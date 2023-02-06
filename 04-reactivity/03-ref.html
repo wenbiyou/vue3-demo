@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ref</title>
+</head>
+<body>
+  <script type="module">
+    import { reactive, effect, ref } from './reactivity/index.js'
+
+    const price = ref(2999)
+    const count = ref(3)
+
+    let total = 0
+
+    effect(() => {
+      total = price.value * count.value
+      console.log('ngz-ceshi', `小米手机，单价${price.value}, 数量${count.value}, 总价${total}`)
+    })
+
+    price.value = 1999
+    count.value = 1
+
+
+  </script>
+  
+</body>
+</html>

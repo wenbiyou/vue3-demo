@@ -67,3 +67,50 @@ export function trigger (target, key) {
     })
   }
 }
+
+export function ref(raw) {
+  // 判断raw是否是 ref 创建的对象
+  if (isObject(raw) && raw.__v_isRef) {
+    return
+  }
+  let value = convert(raw)
+  const r = {
+    __v_isRef: true,
+    get value () {
+      track(r, 'value')
+      return value
+    },
+    set value (newValue) {
+      if (newValue !== value) {
+        raw = newValue
+        value = convert(raw)
+        trigger(r, 'value')
+      }
+    }
+  }
+  return r
+}
+
+export function toRefs(proxy) {
+  const ret  = proxy instanceof Array ? new Array(proxy.legth) : {}
+
+  for (const key in proxy) {
+    ret[key] = toProxyRef(proxy, key)
+  }
+
+  return ret
+
+}
+
+function toProxyRef (proxy, key) {
+  const r = {
+    __v_isRef: true,
+    get value () {
+      return proxy[key]
+    },
+    set value (newValue) {
+      proxy[key] = newValue
+    }
+  }
+  return r
+}
