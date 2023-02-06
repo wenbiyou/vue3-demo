@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>收集依赖/触发更新</title>
+</head>
+<body>
+  <script type="module">
+    import { reactive, effect } from './reactivity/index.js'
+
+    const product = reactive({
+      name: "xiaomi11",
+      price: 2999,
+      count: 3
+    })
+
+    let total = 0
+
+    effect(() => {
+      total = product.price * product.count
+      console.log('ngz-ceshi', `小米手机，单价${product.price}, 数量${product.count}, 总价${total}`)
+    })
+
+    product.price = 1999
+    product.count = 1
+
+
+  </script>
+  
+</body>
+</html>

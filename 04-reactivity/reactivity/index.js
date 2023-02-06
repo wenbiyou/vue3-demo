@@ -8,7 +8,7 @@ export function reactive (target) {
   const handler = {
     get (target, key, receiver) {
       // 收集依赖
-
+      track(target, key)
       const result = Reflect.get(target, key, receiver)
       return convert(result)
     },
@@ -18,6 +18,7 @@ export function reactive (target) {
       if (oldValue !== value) {
         result =Reflect.set(target, key, value, receiver)
         // 触发更新
+        trigger(target, key)
       }
       return result
     },
@@ -26,10 +27,43 @@ export function reactive (target) {
       const result = Reflect.deleteProperty(target, key)
       if (hadKey && result) {
         // 触发更新
+        trigger(target, key)
       }
       return result
     }
   }
 
   return new Proxy(target, handler)
+}
+
+let activeEffect = null
+export function effect (callback) {
+  activeEffect = callback
+  callback() // 访问对象属性，收集依赖
+  activeEffect = null
+}
+
+let targetMap = new WeakMap()
+export function track (target, key) {
+  if (!activeEffect) return
+  let depsMap = targetMap.get(target)
+  if (!depsMap) {
+    targetMap.set(target, (depsMap = new Map()))
+  }
+  let dep = depsMap.get(key)
+  if (!dep) {
+    depsMap.set(key, (dep = new Set()))
+  }
+  dep.add(activeEffect)
+}
+
+export function trigger (target, key) {
+  const depsMap = targetMap.get(target)
+  if (!depsMap) return
+  const dep = depsMap.get(key)
+  if (dep) {
+    dep.forEach(effect => {
+      effect()
+    })
+  }
 }
