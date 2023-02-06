@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="app">
+      <button @click="addCount">add</button>
+      <button @click="stop">stop</button>
+      <br>
+      {{ count }}
+    </div>
+
+    <script type="module">
+      import {
+        createApp,
+        ref,
+        watchEffect,
+      } from "./node_modules/vue/dist/vue.esm-browser.js";
+
+      const count = ref(0);
+      const addCount = () => {
+        count.value++
+      }
+
+      createApp({
+        setup() {
+          
+          const stop = watchEffect(async () => {
+            console.log(count.value);
+          });
+
+          return {
+            count,
+            addCount,
+            stop,
+          };
+        },
+      }).mount("#app");
+    </script>
+  </body>
+</html>

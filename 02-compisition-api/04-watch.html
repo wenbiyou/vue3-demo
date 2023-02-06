@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="app">
+      请用yes / no 回答问题
+      <br>
+      <input type="text" v-model="question">
+      <br>
+      {{ answer }} 
+      
+    </div>
+
+    <script type="module">
+      import {
+        createApp,
+        ref,
+        watch
+      } from "./node_modules/vue/dist/vue.esm-browser.js";
+
+      createApp({
+        setup() {
+          const question = ref('')
+          const answer = ref('')
+
+          watch(question, async () => {
+            const respose = await fetch('https://www.yesno.wtf/api')
+            const data = await respose.json()
+            answer.value = data.answer
+          })
+          return {
+            question,
+            answer,
+            
+          };
+        },
+      }).mount("#app");
+    </script>
+  </body>
+</html>
